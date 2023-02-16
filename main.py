@@ -3,6 +3,7 @@ from flask import Flask
 import time
 
 MODEL_PATH = 'movie_recommender_model.pkl'
+MOVIE_LIST_PATH = 'movie_list.pkl'
 
 
 app = Flask(__name__)
@@ -12,8 +13,8 @@ app = Flask(__name__)
 with open(MODEL_PATH, 'rb') as file:
     model = pickle.load(file)
 
-#TODO: This is a dummy version, replace with real list of IDs
-movie_ids = [i for i in range(100)]
+with open(MOVIE_LIST_PATH, 'rb') as f:
+    movie_ids = pickle.load(f)
 
 
 # ---------------------------------- ROUTES ---------------------------------- #
@@ -40,7 +41,7 @@ def recommend_movies_helper(user_id, list_of_movies):
     predictions = sorted(predictions, key=lambda x: x[1], reverse=True)
     
     output = ''
-    for idx, ids_preds in enumerate(predictions[:10]):
+    for idx, ids_preds in enumerate(predictions[:20]):
         ids, preds = ids_preds
         if idx != 0: output += ','
         output += str(ids)
@@ -52,4 +53,4 @@ def recommend_movies_helper(user_id, list_of_movies):
 # ---------------------------------------------------------------------------- #
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=8082)
